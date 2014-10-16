@@ -1,7 +1,23 @@
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class Starfield extends PApplet {
+
 Particle [] meteor = new Particle[50];
 Particle ufo  = new OddballParticle();
 Boundary walls = new Boundary();
-void setup()
+public void setup()
 {
 	size(500,500);
 	background(0);
@@ -10,7 +26,7 @@ void setup()
 		meteor[index] = new NormalParticle();
 	}
 }
-void draw()
+public void draw()
 {
 	background(0);
 	for(int index = 0; index < meteor.length; index++)
@@ -23,12 +39,13 @@ void draw()
 	ufo.move();
 	ufo.collide();
 	walls.show();
+	((OddballParticle)ufo).swag();
 }
 interface Particle
 {
-	void show();
-	void move();
-	void collide();
+	public void show();
+	public void move();
+	public void collide();
 }
 class NormalParticle implements Particle
 {
@@ -51,19 +68,19 @@ class NormalParticle implements Particle
 		if(changeX == 0)
 			changeX = 1;
 	}
-	void show()
+	public void show()
 	{
 		noStroke();
 		normalColor = color((int)(Math.random()*256),(int)(Math.random()*256),(int)(Math.random()*256));
 		fill(normalColor);
 		ellipse(myX,myY,10,10);
 	}
-	void move()
+	public void move()
 	{
 		myX = myX + (changeX * directionX);
 		myY = myY + (changeY * directionY);
 	}
-	void collide()
+	public void collide()
 	{
 		if(myX < 0 || myX > 500)
 			directionX = directionX * -1;
@@ -92,18 +109,18 @@ class OddballParticle implements Particle
 		directionY = 1;
 		dotColor = color(255,255,0);
 	}
-	void show()
+	public void show()
 	{
 		noStroke();
 		fill(dotColor);
 		ellipse(myX,myY,20,20);
 	}
-	void move()
+	public void move()
 	{
 		myX = myX + (changeX * directionX);
 		myY = myY + (changeY * directionX);
 	}
-	void collide()
+	public void collide()
 	{
 		bouncy = true;
 		if(get(myX + 10, myY + 10)!= color(0,0,0) && get(myX + 10, myY + 10)!= color(100))
@@ -142,10 +159,14 @@ class OddballParticle implements Particle
 		if(myY < 0 || myY > 500)
 			directionY = directionY * -1;
 	}
+	public void swag()
+	{
+		println("swag");
+	}
 }
 class Boundary
 {
-	void show()
+	public void show()
 	{
 	fill(100);
 	rect(0,0, width, 5);
@@ -155,3 +176,12 @@ class Boundary
 	}
 }
 
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "Starfield" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
+}
